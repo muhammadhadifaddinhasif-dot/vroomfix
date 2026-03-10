@@ -116,9 +116,52 @@
             0%, 100% { opacity: 1; }
             50% { opacity: 0.7; }
         }
+
+        /* Sidebar transitions */
+        #sidebar {
+            transition: transform 0.3s ease-in-out;
+        }
+        
+        #main-content {
+            transition: margin-left 0.3s ease-in-out, width 0.3s ease-in-out;
+        }
+        
+        #header {
+            transition: left 0.3s ease-in-out, width 0.3s ease-in-out;
+        }
+        
+        .sidebar-open #main-content {
+            margin-left: 18rem; /* 72 * 0.25rem = 18rem */
+        }
+        
+        .sidebar-closed #main-content {
+            margin-left: 0;
+        }
+        
+        .sidebar-open #header {
+            left: 18rem;
+            width: calc(100% - 18rem);
+        }
+        
+        .sidebar-closed #header {
+            left: 0;
+            width: 100%;
+        }
+        
+        /* Mobile adjustments */
+        @media (max-width: 768px) {
+            .sidebar-open #main-content {
+                margin-left: 0;
+            }
+            
+            .sidebar-open #header {
+                left: 0;
+                width: 100%;
+            }
+        }
     </style>
 </head>
-<body class="bg-slate-50 dark:bg-darkBg text-slate-900 dark:text-slate-100">
+<body class="bg-slate-50 dark:bg-darkBg text-slate-900 dark:text-slate-100 sidebar-open">
 
     <!-- Login Modal -->
     <div id="login-modal" class="fixed inset-0 z-[100] bg-black/80 backdrop-blur-md hidden flex items-center justify-center p-4">
@@ -133,79 +176,103 @@
         </div>
     </div>
 
-   <div id="sidebar-overlay" onclick="toggleSidebar()" class="fixed inset-0 bg-black/50 z-40 hidden lg:hidden"></div>
+    <!-- Toggle Button -->
+    <button onclick="toggleSidebar()" 
+        class="fixed top-4 left-4 z-[60] bg-blue-600 text-white p-3 rounded-xl shadow-lg hover:bg-blue-700 transition">
+        <i class="fas fa-bars"></i>
+    </button>
 
-<aside id="main-sidebar" class="fixed left-0 top-0 h-screen w-72 bg-white dark:bg-slate-900 border-r dark:border-slate-800 p-6 z-50 transition-transform -translate-x-full lg:translate-x-0">
-    <div class="flex items-center justify-between mb-10 px-2">
-        <div class="flex items-center gap-3">
+    <!-- Sidebar -->
+    <aside id="sidebar" class="fixed left-0 top-0 h-screen w-72 bg-white dark:bg-slate-900 border-r dark:border-slate-800 p-6 z-50 transform transition-transform duration-300 -translate-x-full">
+        <div class="flex items-center gap-3 mb-10 px-2">
             <i class="fas fa-car-side text-3xl text-blue-600"></i>
-            <h1 class="text-xl font-extrabold tracking-tighter uppercase">Vroom<span class="text-blue-600">Fix</span></h1>
+            <h1 class="text-xl font-extrabold tracking-tighter uppercase">
+                Vroom<span class="text-blue-600">Fix</span>
+            </h1>
         </div>
-        <button onclick="toggleSidebar()" class="lg:hidden p-2 text-slate-500">
-            <i class="fas fa-times text-xl"></i>
-        </button>
-    </div>
 
-    <nav class="space-y-1 overflow-y-auto h-[calc(100vh-150px)]">
-        <button onclick="showPage('home')" id="nav-home" class="nav-btn w-full flex items-center gap-3 p-3.5 rounded-2xl hover:bg-slate-100 dark:hover:bg-slate-800 transition active-nav">
-            <i class="fas fa-home w-5"></i> <span data-i18n="nav_home">Utama</span>
-        </button>
-        <div class="py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest px-4">Kategori</div>
-        <button onclick="showPage('maintenance')" id="nav-maintenance" class="nav-btn w-full flex items-center gap-3 p-3.5 rounded-2xl hover:bg-slate-100 dark:hover:bg-slate-800 transition">
-            <i class="fas fa-oil-can w-5"></i> <span data-i18n="nav_maint">Maintenance</span>
-        </button>
-        <button onclick="showPage('problems')" id="nav-problems" class="nav-btn w-full flex items-center gap-3 p-3.5 rounded-2xl hover:bg-slate-100 dark:hover:bg-slate-800 transition">
-            <i class="fas fa-exclamation-triangle w-5"></i> <span data-i18n="nav_prob">Problems</span>
-        </button>
-        <button onclick="showPage('tools')" id="nav-tools" class="nav-btn w-full flex items-center gap-3 p-3.5 rounded-2xl hover:bg-slate-100 dark:hover:bg-slate-800 transition">
-            <i class="fas fa-toolbox w-5"></i> <span data-i18n="nav_tools">Tools</span>
-        </button>
-        <button onclick="showPage('safety')" id="nav-safety" class="nav-btn w-full flex items-center gap-3 p-3.5 rounded-2xl hover:bg-slate-100 dark:hover:bg-slate-800 transition">
-            <i class="fas fa-user-shield w-5"></i> <span data-i18n="nav_safety">Safety</span>
-        </button>
-        <button onclick="showPage('habits')" id="nav-habits" class="nav-btn w-full flex items-center gap-3 p-3.5 rounded-2xl hover:bg-slate-100 dark:hover:bg-slate-800 transition">
-            <i class="fas fa-gauge-high w-5"></i> <span data-i18n="nav_habits">Habits</span>
-        </button>
-        <button onclick="showPage('knowledge')" id="nav-knowledge" class="nav-btn w-full flex items-center gap-3 p-3.5 rounded-2xl hover:bg-slate-100 dark:hover:bg-slate-800 transition">
-            <i class="fas fa-book w-5"></i> <span data-i18n="nav_know">Knowledge</span>
-        </button>
-
-        <div class="pt-6 mt-6 border-t dark:border-slate-800">
-            <button onclick="openAdmin()" id="nav-admin" class="nav-btn w-full flex items-center gap-3 p-3.5 rounded-2xl text-amber-500 hover:bg-amber-50 dark:hover:bg-amber-900/10 transition">
-                <i class="fas fa-lock w-5"></i> <span data-i18n="nav_admin">Admin Center</span>
+        <nav class="space-y-1">
+            <button onclick="showPage('home')" id="nav-home"
+                class="nav-btn w-full flex items-center gap-3 p-3.5 rounded-2xl hover:bg-slate-100 dark:hover:bg-slate-800 transition active-nav">
+                <i class="fas fa-home w-5"></i>
+                <span data-i18n="nav_home">Utama</span>
             </button>
-            <button id="logout-btn" onclick="processLogout()" class="hidden w-full flex items-center gap-3 p-3.5 rounded-2xl text-red-500 hover:bg-red-50 dark:hover:bg-red-900/10 transition mt-2">
-                <i class="fas fa-sign-out-alt w-5"></i> <span>Logout</span>
+
+            <div class="py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest px-4">
+                Kategori
+            </div>
+
+            <button onclick="showPage('maintenance')" id="nav-maintenance"
+                class="nav-btn w-full flex items-center gap-3 p-3.5 rounded-2xl hover:bg-slate-100 dark:hover:bg-slate-800 transition">
+                <i class="fas fa-oil-can w-5"></i>
+                <span data-i18n="nav_maint">Maintenance</span>
+            </button>
+
+            <button onclick="showPage('problems')" id="nav-problems"
+                class="nav-btn w-full flex items-center gap-3 p-3.5 rounded-2xl hover:bg-slate-100 dark:hover:bg-slate-800 transition">
+                <i class="fas fa-exclamation-triangle w-5"></i>
+                <span data-i18n="nav_prob">Problems</span>
+            </button>
+
+            <button onclick="showPage('tools')" id="nav-tools"
+                class="nav-btn w-full flex items-center gap-3 p-3.5 rounded-2xl hover:bg-slate-100 dark:hover:bg-slate-800 transition">
+                <i class="fas fa-toolbox w-5"></i>
+                <span data-i18n="nav_tools">Tools</span>
+            </button>
+
+            <button onclick="showPage('safety')" id="nav-safety"
+                class="nav-btn w-full flex items-center gap-3 p-3.5 rounded-2xl hover:bg-slate-100 dark:hover:bg-slate-800 transition">
+                <i class="fas fa-user-shield w-5"></i>
+                <span data-i18n="nav_safety">Safety</span>
+            </button>
+
+            <button onclick="showPage('habits')" id="nav-habits"
+                class="nav-btn w-full flex items-center gap-3 p-3.5 rounded-2xl hover:bg-slate-100 dark:hover:bg-slate-800 transition">
+                <i class="fas fa-gauge-high w-5"></i>
+                <span data-i18n="nav_habits">Habits</span>
+            </button>
+
+            <button onclick="showPage('knowledge')" id="nav-knowledge"
+                class="nav-btn w-full flex items-center gap-3 p-3.5 rounded-2xl hover:bg-slate-100 dark:hover:bg-slate-800 transition">
+                <i class="fas fa-book w-5"></i>
+                <span data-i18n="nav_know">Knowledge</span>
+            </button>
+
+            <div class="pt-6 mt-6 border-t dark:border-slate-800">
+                <button onclick="openAdmin()" id="nav-admin"
+                    class="nav-btn w-full flex items-center gap-3 p-3.5 rounded-2xl text-amber-500 hover:bg-amber-50 dark:hover:bg-amber-900/10 transition">
+                    <i class="fas fa-lock w-5"></i>
+                    <span data-i18n="nav_admin">Admin Center</span>
+                </button>
+
+                <button id="logout-btn" onclick="processLogout()"
+                    class="hidden w-full flex items-center gap-3 p-3.5 rounded-2xl text-red-500 hover:bg-red-50 dark:hover:bg-red-900/10 transition mt-2">
+                    <i class="fas fa-sign-out-alt w-5"></i>
+                    <span>Logout</span>
+                </button>
+            </div>
+        </nav>
+    </aside>
+
+    <!-- Header -->
+    <header id="header" class="fixed top-0 right-0 h-20 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b dark:border-slate-800 flex items-center justify-between px-10 z-40 transition-all duration-300 left-72 w-[calc(100%-18rem)]">
+        <h2 id="header-title" class="text-xl font-bold uppercase tracking-tight">Dashboard</h2>
+        <div class="flex items-center gap-3">
+            <button onclick="showSearchPage()" class="p-3 rounded-2xl bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 hover:scale-110 transition relative">
+                <i class="fas fa-search"></i>
+                <span class="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full text-[10px] text-white flex items-center justify-center search-badge">!</span>
+            </button>
+            <button onclick="toggleTheme()" class="p-3 rounded-2xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-yellow-400 hover:scale-110 transition">
+                <i id="theme-icon" class="fas fa-moon"></i>
+            </button>
+            <button onclick="toggleLang()" class="bg-slate-900 dark:bg-blue-600 text-white px-6 py-2.5 rounded-2xl font-bold text-xs shadow-lg">
+                <i class="fas fa-language mr-2"></i> <span id="lang-text">ENGLISH</span>
             </button>
         </div>
-    </nav>
-</aside>
-
-<header class="fixed top-0 right-0 left-0 lg:left-72 h-20 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b dark:border-slate-800 flex items-center justify-between px-4 lg:px-10 z-40">
-    <div class="flex items-center gap-4">
-        <button onclick="toggleSidebar()" class="lg:hidden p-3 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">
-            <i class="fas fa-bars"></i>
-        </button>
-        <h2 id="header-title" class="text-lg lg:text-xl font-bold uppercase tracking-tight">Dashboard</h2>
-    </div>
-    
-    <div class="flex items-center gap-2 lg:gap-3">
-        <button onclick="showSearchPage()" class="p-2.5 lg:p-3 rounded-2xl bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 hover:scale-110 transition relative">
-            <i class="fas fa-search"></i>
-        </button>
-        <button onclick="toggleTheme()" class="p-2.5 lg:p-3 rounded-2xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-yellow-400 hover:scale-110 transition">
-            <i id="theme-icon" class="fas fa-moon"></i>
-        </button>
-        <button onclick="toggleLang()" class="bg-slate-900 dark:bg-blue-600 text-white px-4 lg:px-6 py-2 rounded-2xl font-bold text-[10px] lg:text-xs shadow-lg">
-            <span id="lang-text">ENGLISH</span>
-        </button>
-    </div>
-</header>
-
-<main class="ml-0 lg:ml-72 pt-28 p-4 lg:p-10 min-h-screen transition-all">
+    </header>
 
     <!-- Main Content -->
-    <main class="ml-72 pt-28 p-10 min-h-screen">
+    <main id="main-content" class="pt-28 p-10 min-h-screen transition-all duration-300 ml-72">
         
         <!-- HOME PAGE -->
         <section id="page-home" class="page-section active-section">
@@ -553,36 +620,6 @@
     </button>
 
     <script>
-
-        function toggleSidebar() {
-    const sidebar = document.getElementById('main-sidebar');
-    const overlay = document.getElementById('sidebar-overlay');
-    
-    // Periksa jika sidebar sedang tersembunyi
-    const isHidden = sidebar.classList.contains('-translate-x-full');
-    
-    if (isHidden) {
-        // Buka Sidebar
-        sidebar.classList.remove('-translate-x-full');
-        overlay.classList.remove('hidden');
-        document.body.style.overflow = 'hidden'; // Elak skrol bila menu buka
-    } else {
-        // Tutup Sidebar
-        sidebar.classList.add('-translate-x-full');
-        overlay.classList.add('hidden');
-        document.body.style.overflow = 'auto'; // Benarkan skrol semula
-    }
-}
-
-// Tambahan: Tutup sidebar secara automatik bila butang menu diklik (pada mobile)
-function showPage(pageId) {
-    // ... kod asal showPage anda ...
-    
-    // Tambah ini di hujung fungsi showPage:
-    if (window.innerWidth < 1024) { // 1024px adalah breakpoint 'lg' dalam Tailwind
-        toggleSidebar();
-    }
-}
         // ==================== DATA LENGKAP 6 KATEGORI ====================
         
         // MAINTENANCE DATA (40+ items)
@@ -759,6 +796,25 @@ function showPage(pageId) {
         let isEditing = false;
         let currentSearchFilter = 'all';
         let searchStartTime = 0;
+        let isSidebarOpen = true;
+
+        // Sidebar toggle function
+        function toggleSidebar() {
+            const sidebar = document.getElementById("sidebar");
+            const body = document.body;
+            
+            if (isSidebarOpen) {
+                sidebar.classList.add("-translate-x-full");
+                body.classList.remove("sidebar-open");
+                body.classList.add("sidebar-closed");
+                isSidebarOpen = false;
+            } else {
+                sidebar.classList.remove("-translate-x-full");
+                body.classList.remove("sidebar-closed");
+                body.classList.add("sidebar-open");
+                isSidebarOpen = true;
+            }
+        }
 
         // --- COMPREHENSIVE AI KNOWLEDGE BASE ---
         const aiKnowledge = {
